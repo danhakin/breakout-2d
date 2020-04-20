@@ -14,6 +14,8 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false;
 let leftPressed = false;
 
+let interval = null;
+
 function drawBall() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
@@ -39,8 +41,15 @@ function draw() {
 
 function updatePosition() {
   // Check top and bottom boundaries
-  if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+  if (y + dy < ballRadius) {
     dy = -dy;
+  } else if (y + dy > canvas.height - ballRadius) {
+    // Detect paddle collision
+    if (x > paddleX && x < paddleX + paddleWidth) {
+      dy = -dy;
+    } else {
+      doGameOver();
+    }
   }
 
   // Check right and left boundaries
@@ -65,6 +74,12 @@ function updatePosition() {
   y += dy;
 }
 
+function doGameOver() {
+  alert("GAME OVER");
+  document.location.reload();
+  clearInterval(interval);
+}
+
 function keyDownHandler(e) {
   if (e.key === "Right" || e.key === "ArrowRight") {
     rightPressed = true;
@@ -84,7 +99,7 @@ function keyUpHandler(e) {
 function initialize() {
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
-  setInterval(draw, 20);
+  interval = setInterval(draw, 10);
 }
 
 initialize();
