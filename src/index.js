@@ -17,8 +17,6 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false;
 let leftPressed = false;
 
-let interval = null;
-
 let brickRowCount = 3;
 let brickColumnCount = 5;
 let brickWidth = 75;
@@ -82,6 +80,7 @@ function draw() {
   drawPaddle();
   updatePosition();
   collisionDetection();
+  requestAnimationFrame(draw);
 }
 
 function drawScore() {
@@ -109,8 +108,6 @@ function updatePosition() {
       if (!lives) {
         doGameOver();
       } else {
-        let livesMessage = lives === 1 ? "life" : "lives";
-        alert(`Try again! You have ${lives} ${livesMessage} left`);
         x = canvas.width / 2;
         y = canvas.height - 30;
         dx = 2;
@@ -167,13 +164,11 @@ function collisionDetection() {
 function doGameOver() {
   alert("GAME OVER");
   document.location.reload();
-  clearInterval(interval);
 }
 
 function doWin() {
   alert("YOU WIN, CONGRATULATIONS!");
   document.location.reload();
-  clearInterval(interval);
 }
 
 function keyDownHandler(e) {
@@ -203,7 +198,7 @@ function initialize() {
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
   document.addEventListener("mousemove", mouseMoveHandler, false);
-  interval = setInterval(draw, 10);
+  draw();
 }
 
 initialize();
