@@ -28,18 +28,20 @@ let bricks = [];
 for (let c = 0; c < brickColumnCount; c++) {
   bricks[c] = [];
   for (let r = 0; r < brickRowCount; r++) {
-    bricks[c][r] = { x: 0, y: 0 };
+    bricks[c][r] = { x: 0, y: 0, status: 1 };
   }
 }
 
 function drawBricks() {
   for (let c = 0; c < brickColumnCount; c++) {
     for (let r = 0; r < brickRowCount; r++) {
-      let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
-      let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
-      bricks[c][r].x = brickX;
-      bricks[c][r].y = brickY;
-      drawBrick(brickX, brickY);
+      if (bricks[c][r].status === 1) {
+        let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+        let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+        bricks[c][r].x = brickX;
+        bricks[c][r].y = brickY;
+        drawBrick(brickX, brickY);
+      }
     }
   }
 }
@@ -72,6 +74,7 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   drawPaddle();
+  collisionDetection();
   drawBall();
   updatePosition();
 }
@@ -111,6 +114,24 @@ function updatePosition() {
   y += dy;
 }
 
+function collisionDetection() {
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      let brick = bricks[c][r];
+      if (
+        brick.status === 1 &&
+        x > brick.x &&
+        x < brick.x + brickWidth &&
+        y > brick.y &&
+        y < brick.y + brickHeight
+      ) {
+        dy = -dy;
+        brick.status = 0;
+      }
+    }
+  }
+}
+
 function doGameOver() {
   alert("GAME OVER");
   document.location.reload();
@@ -136,7 +157,7 @@ function keyUpHandler(e) {
 function initialize() {
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
-  interval = setInterval(draw, 50);
+  interval = setInterval(draw, 10);
 }
 
 initialize();
