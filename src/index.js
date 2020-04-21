@@ -1,6 +1,8 @@
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
+let score = 0;
+
 let ballRadius = 10;
 let x = canvas.width / 2;
 let y = canvas.height - 30;
@@ -72,11 +74,18 @@ function drawPaddle() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawScore();
   drawBricks();
+  drawBall();
   drawPaddle();
   collisionDetection();
-  drawBall();
   updatePosition();
+}
+
+function drawScore() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095dd";
+  ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 function updatePosition() {
@@ -127,6 +136,10 @@ function collisionDetection() {
       ) {
         dy = -dy;
         brick.status = 0;
+        score++;
+        if (score === brickRowCount * brickColumnCount) {
+          doWin();
+        }
       }
     }
   }
@@ -134,6 +147,12 @@ function collisionDetection() {
 
 function doGameOver() {
   alert("GAME OVER");
+  document.location.reload();
+  clearInterval(interval);
+}
+
+function doWin() {
+  alert("YOU WIN, CONGRATULATIONS!");
   document.location.reload();
   clearInterval(interval);
 }
@@ -158,6 +177,7 @@ function initialize() {
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
   interval = setInterval(draw, 10);
+  //draw();
 }
 
 initialize();
