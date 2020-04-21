@@ -2,6 +2,7 @@ const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
 let score = 0;
+let lives = 3;
 
 let ballRadius = 10;
 let x = canvas.width / 2;
@@ -75,17 +76,24 @@ function drawPaddle() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawScore();
+  drawLives();
   drawBricks();
   drawBall();
   drawPaddle();
-  collisionDetection();
   updatePosition();
+  collisionDetection();
 }
 
 function drawScore() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095dd";
   ctx.fillText(`Score: ${score}`, 8, 20);
+}
+
+function drawLives() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095dd";
+  ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 function updatePosition() {
@@ -97,7 +105,18 @@ function updatePosition() {
     if (x > paddleX && x < paddleX + paddleWidth) {
       dy = -dy;
     } else {
-      doGameOver();
+      lives--;
+      if (!lives) {
+        doGameOver();
+      } else {
+        let livesMessage = lives === 1 ? "life" : "lives";
+        alert(`Try again! You have ${lives} ${livesMessage} left`);
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 2;
+        dy = -2;
+        paddleX = (canvas.width - paddleWidth) / 2;
+      }
     }
   }
 
