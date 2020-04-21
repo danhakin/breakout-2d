@@ -16,6 +16,42 @@ let leftPressed = false;
 
 let interval = null;
 
+let brickRowCount = 3;
+let brickColumnCount = 5;
+let brickWidth = 75;
+let brickHeight = 20;
+let brickPadding = 10;
+let brickOffsetTop = 30;
+let brickOffsetLeft = 30;
+
+let bricks = [];
+for (let c = 0; c < brickColumnCount; c++) {
+  bricks[c] = [];
+  for (let r = 0; r < brickRowCount; r++) {
+    bricks[c][r] = { x: 0, y: 0 };
+  }
+}
+
+function drawBricks() {
+  for (let c = 0; c < brickColumnCount; c++) {
+    for (let r = 0; r < brickRowCount; r++) {
+      let brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+      let brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+      bricks[c][r].x = brickX;
+      bricks[c][r].y = brickY;
+      drawBrick(brickX, brickY);
+    }
+  }
+}
+
+function drawBrick(x, y) {
+  ctx.beginPath();
+  ctx.rect(x, y, brickWidth, brickHeight);
+  ctx.fillStyle = "#0095dd";
+  ctx.fill();
+  ctx.closePath();
+}
+
 function drawBall() {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
@@ -34,6 +70,7 @@ function drawPaddle() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBricks();
   drawPaddle();
   drawBall();
   updatePosition();
@@ -99,7 +136,7 @@ function keyUpHandler(e) {
 function initialize() {
   document.addEventListener("keydown", keyDownHandler, false);
   document.addEventListener("keyup", keyUpHandler, false);
-  interval = setInterval(draw, 10);
+  interval = setInterval(draw, 50);
 }
 
 initialize();
